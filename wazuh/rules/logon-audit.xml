@@ -1,0 +1,54 @@
+<!--
+# README
+
+## Meta
+Author: Alejandro Rodríguez
+Rule-set Name: logon-audit
+
+## Ruleset
+Comprehensive audit of logon events.
+
+## Requirements
+
+-->
+
+
+<!-- Constants-->
+<var name="ms_users">SYSTEM|LOCAL SERVICE|NETWORK SERVICE|UMFD-*|DWM-*</var>
+
+<!-- User defined-->
+<var name="valid_logon_hours">6 am - 8 pm</var>
+
+<!--Ruleset-->
+<group name="logon-audit">
+
+  <!-- Immediate dependency rules -->
+
+  <!--rule id="60103" level="0">
+    <if_sid>60001</if_sid>
+    <field name="win.system.severityValue">^AUDIT_SUCCESS$|^success$</field>
+    <description>Windows audit success event</description>
+    <options>no_full_log</options>
+  </rule-->
+
+
+  <!-- Base matching rules -->
+
+  <rule id="10101" level="0">
+    <if_sid>60103</if_sid>
+    <field name="win.system.eventID">^4624$</field>
+    <description>An account was successfully logged on</description>
+    <options>no_full_log</options>
+    <info type="link">https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4624</info>
+  </rule>
+
+  <!-- Aggregation rules -->
+
+
+  <!-- Anomaly matching rules -->
+
+
+  <!-- Conditional rules -->
+
+    
+</group>
