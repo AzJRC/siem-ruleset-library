@@ -1,0 +1,100 @@
+<!--
+# README
+
+## Meta
+Author: Alejandro Rodríguez
+Rule-set Name: logon-audit
+Rule-set ID: 200000
+Rule-set Range: [200000, 200099] 
+
+## Ruleset
+Comprehensive audit of logon events.
+
+## Requirements
+
+-->
+
+
+<!-- Variables and constants -->
+<var name="MS_USERS">^NT AUTHORITY$|</var>
+<var name="STD_GROUP">windows</var>
+
+<var name="not_valid_logon_hours">10 pm - 5 am</var>
+<var name="max_logon_attempts">3</var>
+<var name="custom_groups">logon-audit</var>
+
+<!--Ruleset-->
+<group name="logon-audit">
+
+  <!--
+  Immediate dependency rules 
+  -->
+
+
+  <!--rule id="60103" level="0">
+    <if_sid>60001</if_sid>
+    <field name="win.system.severityValue">^AUDIT_SUCCESS$|^success$</field>
+    <description>Windows audit success event</description>
+    <options>no_full_log</options>
+  </rule-->
+
+
+  <!--
+  Base matching rules: [00 - 15]
+  -->
+
+  <rule id="200000" level="0">
+    <if_sid>60103</if_sid>
+    <field name="win.system.eventID">^4624$</field>
+    <description>An account was successfully logged on</description>
+    <options>no_full_log</options>
+    <info type="link">https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4624</info>
+    <group>$STD_GROUP</group>
+    <group>$custom_groups</group>
+  </rule>
+
+  <rule id="200001" level="0">
+    <if_sid>60103</if_sid>
+    <field name="win.system.eventID">^4625$</field>
+    <description>An account failed to log on</description>
+    <options>no_full_log</options>
+    <info type="link">https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4625</info>
+    <group>$STD_GROUP</group>
+    <group>$custom_groups</group>
+  </rule>
+
+
+  <rule id="200002" level="0">
+    <if_sid>200000</if_sid>
+    <field name="win.eventdata.logonType">^3$</field>
+    <description>An account was succesfully logged on via network</description>
+    <options>no_full_log</options>
+    <group>$STD_GROUP</group>
+    <group>$custom_groups</group>
+  </rule>
+
+  <!--
+  Aggregation rules [16 - 30]
+  -->
+
+
+
+
+
+  <!--
+  Conditional rules [31 - 60]
+  -->
+
+  <rule id="200031" level="12">
+    <if_sid>200002</if_sid>
+    <match negate="yes">$MS_USERS</match>
+    <time>$not_valid_logon_hours</time>
+    <description>An account was succesfully logged on via network outside business hours.</description>
+  </rule> 
+
+  <!--
+  Anomaly matching rules [61 - 99]
+  -->
+
+    
+</group>
