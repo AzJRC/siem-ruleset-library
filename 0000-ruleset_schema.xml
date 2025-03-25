@@ -1,0 +1,62 @@
+<!-- 
+# README
+
+## Meta
+Author: [Your Name]
+Rule-set Name: [Descriptive Name]
+Rule-set ID: [ID Range Start]
+Rule-set Range: [Start ID, End ID] 
+Version: [Version Number]
+Last Updated: [Date]
+
+## Description
+[Briefly describe what the ruleset does and its purpose.]
+
+## Requirements
+[List any dependencies or prerequisites if applicable.]
+
+-->
+
+<!-- ============================= -->
+<!--        Global Variables       -->
+<!-- ============================= -->
+
+
+
+
+
+<!-- ============================= -->
+<!--         Rule Groups           -->
+<!-- ============================= -->
+
+<group name="[group-name]">
+
+
+  <!-- ============================= -->
+  <!--   1. Base Matching Rules      -->
+  <!-- ============================= -->
+
+  <rule id="XXXXX" level="0">
+
+  </rule>
+
+
+  <!-- ============================== -->
+  <!--    2. Low Severity Rules       -->
+  <!-- ============================== -->
+
+
+
+  <!-- ============================== -->
+  <!--    3. Mid Severity Rules       -->
+  <!-- ============================== -->
+
+  
+  
+  <!-- =============================== -->
+  <!--    4. High Severity Rules       -->
+  <!-- =============================== -->
+
+
+
+</group>

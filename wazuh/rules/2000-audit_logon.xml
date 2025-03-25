@@ -11,6 +11,7 @@ Rule-set Range: [200000, 200099]
 Comprehensive audit of logon events.
 
 ## Requirements
+None
 
 -->
 
@@ -23,13 +24,13 @@ Comprehensive audit of logon events.
 <var name="max_logon_attempts">3</var>
 <var name="custom_groups">logon-audit</var>
 
+
 <!--Ruleset-->
 <group name="logon-audit">
 
   <!--
-  Immediate dependency rules 
+  Dependency rules 
   -->
-
 
   <!--rule id="60103" level="0">
     <if_sid>60001</if_sid>
@@ -38,9 +39,8 @@ Comprehensive audit of logon events.
     <options>no_full_log</options>
   </rule-->
 
-
   <!--
-  Base matching rules: [00 - 15]
+  Base matching rules [00-14]
   -->
 
   <rule id="200000" level="0">
@@ -74,7 +74,7 @@ Comprehensive audit of logon events.
   </rule>
 
   <!--
-  Aggregation rules [16 - 30]
+  Aggregation rules [15-29]
   -->
 
 
@@ -82,10 +82,10 @@ Comprehensive audit of logon events.
 
 
   <!--
-  Conditional rules [31 - 60]
+  Conditional rules [30-44]
   -->
 
-  <rule id="200031" level="12">
+  <rule id="200030" level="12">
     <if_sid>200002</if_sid>
     <match negate="yes">$MS_USERS</match>
     <time>$not_valid_logon_hours</time>
@@ -93,7 +93,7 @@ Comprehensive audit of logon events.
   </rule> 
 
   <!--
-  Anomaly matching rules [61 - 99]
+  Anomaly matching rules [45-60]
   -->
 
     

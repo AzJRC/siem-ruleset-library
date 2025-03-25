@@ -1,0 +1,120 @@
+<!-- 
+# README
+
+## Meta
+Author: Alejandro Rodríguez
+Rule-set Name: ejbca-ruleset
+Rule-set ID: 4010
+Rule-set Range: [401000, 401099] 
+Version: 0.1.1
+Last Updated: 13/03/2025
+
+## Description
+The `ejbca_ruleset` is designed to generate important alerts from captured logs of EJBCA (Enterprise Java Beans Certificate Authority) system.
+
+## Requirements
+- EJBCA decoder (4010-ejbca_decoder.xml)
+
+-->
+
+
+<!-- ============================= -->
+<!--        Global Variables       -->
+<!-- ============================= -->
+
+<!-- EJBCA status values: https://doc.primekey.com/ejbca/ejbca-operations/ejbca-ca-concept-guide/logging/audit-log-overview/security-audit-events#SecurityAuditEvents-Status -->
+
+
+
+
+<!-- ============================= -->
+<!--         Rule Groups           -->
+<!-- ============================= -->
+
+<group name="ejbca">
+
+  
+  <!-- ============================= -->
+  <!--   1. Base Matching Rules      -->
+  <!-- ============================= -->
+
+  <!-- Alert for logs decoded by ejbca-wildfly -->
+  <rule id="401000" level="0">
+    <decoded_as>ejbca-wildfly</decoded_as>
+    <description>EJBCA $(event.logger) event detected</description>
+  </rule>
+  
+  
+  <!-- Alert for logs decoded by ejbca-wildfly that were SUCCESSFUL -->
+  <rule id="401001" level="1">
+    <if_sid>401000</if_sid>
+    <field name="event.status">SUCCESS</field>
+    <description>Successful EJBCA event detected in the $(event.category) module</description>
+  </rule>
+  
+
+  <!-- ============================== -->
+  <!--    2. Low Severity Rules       -->
+  <!-- ============================== -->
+
+
+  <!-- Alert for connections to the webadmin portal -->
+  <rule id="401041" level="3">
+    <if_sid>401001</if_sid>
+    <field name="event.category">ADMINWEB_ADMINISTRATORLOGGEDIN</field>
+    <field name="event.module">ADMINWEB</field>
+    <description>New session initialized to EJBCA $(event.module) from $(event.session.srcip)</description>
+    <group>authentication</group>
+  </rule>
+  
+
+  <!-- ============================== -->
+  <!--    3. Mid Severity Rules       -->
+  <!-- ============================== -->
+  
+  <!-- Alert for multiple connections to the webadmin portal -->
+  <rule id="401061" level="7" frequency="3" timeframe="300">
+    <if_matched_sid>401041</if_matched_sid>
+    <description>Multiple sessions initialized to EJBCA $(event.module)</description>
+    <group>authentication</group>
+  </rule>
+  
+  <!-- Alert for CA creation -->
+  <rule id="401062" level="8">
+    <if_sid>401001</if_sid>
+    <field name="event.category">CERT_STORED</field>
+    <field name="event.module">CERTIFICATE</field>
+    <description>A new CA has been created</description>
+    <group>ca_management</group>
+  </rule>
+  
+  <!-- Alert for Crypto Token creation -->
+  <rule id="401042" level="5">
+    <if_sid>401001</if_sid>
+    <field name="event.category">CRYPTOTOKEN_GEN_KEYPAIR</field>
+    <field name="event.module">CRYPTOTOKEN</field>
+    <description>Detected a new EJBCA key pair generation</description>
+    <group>cryptography</group>
+  </rule>
+  
+  
+  <!-- =============================== -->
+  <!--    4. High Severity Rules       -->
+  <!-- =============================== -->
+  
+  <rule id="401081" level="12">
+    <if_sid>401001</if_sid>
+    <field name="event.category">CA_DELETION</field>
+    <description>$(event.data.value)</description>
+    <group>ca_management</group>
+  </rule>
+
+  <rule id="401082" level="16">
+    <if_sid>401001</if_sid>
+    <field name="event.category">CA</field>
+    <field name="event.data.status">expired</field>
+    <description>EJBCA CA $(event.data.ca) has expired</description>
+    <group>ca_management</group>
+  </rule>
+
+</group>

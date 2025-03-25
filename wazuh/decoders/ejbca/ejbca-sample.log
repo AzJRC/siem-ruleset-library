@@ -1,0 +1,27 @@
+1 2025-03-12T16:48:57.386+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-12 16:48:57+00:00;ADMINWEB_ADMINISTRATORLOGGEDIN;SUCCESS;ADMINWEB;EJBCA;10.235.235.1 (TRANSPORT_CONFIDENTIAL);;;;remoteip=10.235.235.1
+
+1 2025-03-12T16:49:34.932+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-12 16:49:34+00:00;ACCESS_CONTROL;SUCCESS;ACCESSCONTROL;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);;;;resource0=/cryptotoken/deactivate/-1253662226
+
+1 2025-03-12T16:47:55.035+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-12 16:47:55+00:00;ACCESS_CONTROL;SUCCESS;ACCESSCONTROL;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);;;;resource0=/ca_functionality/edit_certificate_profiles;resource1=/ca/
+
+1 2025-03-12T15:27:06.080+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-12 15:27:06+00:00;CRYPTOTOKEN_DEACTIVATION;SUCCESS;CRYPTOTOKEN;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);-1253662226;;;msg=Deactivated CryptoToken 'WazuhPoC-RootCTKN' with id -1253662226
+
+1 2025-03-12T16:48:57.386+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-12 16:48:57+00:00;CA_CREATION;SUCCESS;CA;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);211218060;;;msg=CA with id 211218060 and name WazuhPoC-ROOTCA01 added, status: 1. ;tokenproperties={certSignKey=signKey, keyEncryptKey=encryptionKey, crlSignKey=signKey, testKey=testKey, defaultKey=signKey};tokensequence=00000
+
+1 2025-03-13T15:45:54.399+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-13 15:45:54+00:00;CRYPTOTOKEN_CREATE;SUCCESS;CRYPTOTOKEN;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);-341579689;;;msg=Created CryptoToken with id -341579689;name=WazuhPoC-SUBCA-TKN;encProviderName=BC;signProviderName=BC;autoActivation=added;autoActivationPinProtection=legacy;added:tokenName=WazuhPoC-SUBCA-TKN
+
+1 2025-03-13T15:47:14.566+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-13 15:47:14+00:00;CRYPTOTOKEN_GEN_KEYPAIR;SUCCESS;CRYPTOTOKEN;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);-341579689;;;msg=Generated new keypair in CryptoToken -341579689;keyAlias=testKey;keySpecification=1024
+
+1 2025-03-13T16:14:35.916+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-13 16:14:35+00:00;CRL_STORED;SUCCESS;CRL;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);1551107617;;;msg=Stored CRL with CRLNumber=1, fingerprint=e14e83d514d1f91813c94d83fdb91dc77b00a6e4, issuerDN 'CN=WazuhPoC-SUBCA02,O=Alejandro,C=MX'.
+
+1 2025-03-13T16:16:36.954+00:00 ejbca-1 EJBCA-WildFly 393 com.keyfactor.util.CertTools - The certificate with serial number '4e5ecb597888f0e1314022d3b60d0db63918e3e8' issued by the CA 'C=MX,O=Alejandro,CN=WazuhPoC-ROOTCA01' will expire at 'Thu Mar 13 16:19:34 UTC 2025'.
+
+1 2025-03-13T16:19:58.226+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.certificates.ca.CaS - CA CN=WazuhPoC-SUBCA02,O=Alejandro,C=MX has expired. certificate expired on 20250313161934GMT+00:00
+
+1 2025-03-13T19:45:32.159+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-13 19:45:32+00:00;CA_EDITING;SUCCESS;CA;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);1551107617;;;msg=CA with id 1551107617 and name WazuhPoC-SUBCA02 edited., 3;changed:subjectaltname=None;added:externalcdp=;added:alternatechains={};tokenproperties={certSignKey=signKey, keyEncryptKey=encryptionKey, crlSignKey=signKey, testKey=testKey, defaultKey=signKey};tokensequence=00000
+
+1 2025-03-14T15:32:45.023+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-14 15:32:45+00:00;CERT_STORED;SUCCESS;CERTIFICATE;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);-1510149024;A17AE5C4E561955D1334CC99CCC7AEB7AFB449F;SYSTEMCA;msg=Certificate stored for username 'SYSTEMCA', fp=0cb82a71731f4b4fad0f43326a01d487b6b32d12, subjectDN 'CN=TEST-CA,O=Alejandro,C=MX', issuerDN 'CN=TEST-CA,O=Alejandro,C=MX', serialNo=A17AE5C4E561955D1334CC99CCC7AEB7AFB449F, accountBindingId=.
+
+1 2025-03-14T15:32:45.068+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-14 15:32:45+00:00;CRL_CREATION;SUCCESS;CRL;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);-1510149024;;;msg=Created CRL with number 1 for CA 'TEST-CA' with DN 'CN=TEST-CA,O=Alejandro,C=MX'.
+
+1 2025-03-14T15:20:27.816+00:00 ejbca-1 EJBCA-WildFly 393 org.cesecore.audit.impl.log4j.Lo - 2025-03-14 15:20:27+00:00;CA_DELETION;SUCCESS;CA;CORE;10.235.235.1 (TRANSPORT_CONFIDENTIAL);1551107617;;;msg=CA with id 1551107617 and name WazuhPoC-SUBCA02 removed.
