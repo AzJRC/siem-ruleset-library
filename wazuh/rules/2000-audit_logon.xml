@@ -5,91 +5,107 @@
 Author: Alejandro Rodríguez
 Rule-set Name: logon-audit
 Rule-set ID: 200000
-Rule-set Range: [200000, 200099] 
+Rule-set Range: [200000, 200099]
+Version: 1.0
+Target OS: Windows (tested on Windows 10+)
 
-## Ruleset
-Comprehensive audit of logon events.
+## Ruleset Description
+This ruleset provides a comprehensive audit and detection logic for logon-related events in Windows environments. It monitors successful and failed authentication attempts, enforces policies regarding high-value account access, identifies abnormal login patterns, and escalates events consistent with brute-force behavior.
 
-## Requirements
-None
+## Assumptions
+- The monitored endpoint is a Windows system with Security Event Log collection enabled.
+- Event IDs 4624 (successful logon) and 4625 (failed logon) are the primary indicators for user authentication activity.
+- Business hours are considered from 07:00 to 19:00, local time.
+- High-value accounts are defined via regex in the variable `$high_value_accounts`.
+
+## Change Log
+- v1.0: Initial release. Includes support for high-value account detection, business hours enforcement, and brute-force escalation logic.
 
 -->
 
+<!-- ============================= -->
+<!--        Global Variables       -->
+<!-- ============================= -->
 
-<!-- Variables and constants -->
 <var name="MS_USERS">NT AUTHORITY</var>
 <var name="STD_GROUP">windows</var>
 <var name="GROUPS">logon-audit</var>
 
-<var name="not_valid_logon_hours">10 pm - 5 am</var>
-<var name="max_logon_attempts">3</var>
-<var name="high_value_accounts">admin-user</var>
+<var name="not_valid_logon_hours">19:01 - 06:59</var>
+<var name="high_value_accounts">^Administrator$|^Admin$</var>
 
+<var name="failed_logon_meta">UserAccount: [$(win.eventdata.targetUserName)], Workstation: [$(win.eventdata.workstationName)], SourceHost: [$(win.eventdata.ipAddress)]</var>
+<var name="success_logon_meta">LogonID: [$(win.eventdata.targetLogonId)], UserAccount: [$(win.eventdata.targetUserName)], Workstation: [$(win.eventdata.workstationName)], SourceHost: [$(win.eventdata.ipAddress)]</var>
 
+<!-- ============================= -->
+<!--         Rule Groups           -->
+<!-- ============================= -->
 
-<!--Ruleset-->
 <group name="logon-audit">
 
-  <!--
-  Base matching rules: [00 - 15]
-  -->
-
-  <rule id="200000" level="1">
-    <field name="win.system.severityValue">^AUDIT_SUCCESS$|^success$</field>
+  <!-- ============================= -->
+  <!--   1. Base Matching Rules      -->
+  <!-- ============================= -->
+  
+  <!-- Successful Logon -->
+  <rule id="200001" level="3">
     <field name="win.system.eventID">^4624$</field>
-    <description>An account was successfully logged on.</description>
+    <description>Successful logon event. $success_logon_meta</description>
     <options>no_full_log</options>
   </rule>
 
-  <rule id="200001" level="1">
+  <!-- Failed Logon -->
+  <rule id="200002" level="3">
     <field name="win.system.eventID">^4625$</field>
-    <description>An account failed to log on</description>
+    <description>Failed logon event. $failed_logon_meta</description>
     <options>no_full_log</options>
   </rule>
 
+  <!-- ============================= -->
+  <!--   2. Low Severity Rules       -->
+  <!-- ============================= -->
 
-
-  <rule id="200002" level="1">
-    <if_sid>200000</if_sid>
-    <field name="win.eventdata.logonType">^2$</field>
-    <description>A user succesfully logged on to this computer.</description>
-    <options>no_full_log</options>
-  </rule>
-
-  <rule id="200003" level="1">
-    <if_sid>200000</if_sid>
-    <field name="win.eventdata.logonType">^3$</field>
-    <description>A user (or computer) succesfully logged on to this computer from the network.</description>
-    <options>no_full_log</options>
-  </rule>
   
-  <!--
-  Aggregation rules [15-29]
-  -->
 
+  <!-- ============================== -->
+  <!--    3. Medium Severity Rules    -->
+  <!-- ============================== -->
 
-
-
-
-  <!--
-  Conditional rules [30-44]
-  -->
-
-  <rule id="200031" level="9">
-    <if_sid>200003</if_sid>
+  <!-- Successful logon event from high-value account -->
+  <rule id="200031" level="8">
+    <if_sid>200001</if_sid>
     <field name="win.eventdata.targetUserName">$high_value_accounts</field>
-    <description>A high value account succesfully logged on.</description>
+    <description>Successful logon event from high-value account. $success_logon_meta</description>
+  </rule>
+
+  <!-- Failed logon event from high-value account -->
+  <rule id="200051" level="12">
+    <if_sid>200002</if_sid>
+    <field name="win.eventdata.targetUserName">$high_value_accounts</field>
+    <description>Failed logon event from high-value account. $failed_logon_meta</description>
   </rule>
   
+  <!-- Failed logon event from high-value account outside business hours -->
   <rule id="200032" level="12">
     <if_sid>200031</if_sid>
-    <time>10 pm - 5 am</time>
-    <description>A high value account succesfully logged on outside business hours.</description>
-  </rule> 
+    <time>$not_valid_logon_hours</time>
+    <description>Failed logon event from high-value account outside business hours. $failed_logon_meta</description>
+  </rule>
+  
+  <!-- Suspicious count of failed logon attempts -->
+  <rule id="200033" level="12" frequency="3" timeframe="600" ignore="600">
+    <if_matched_sid>200002</if_matched_sid>
+    <description>Several (3) failed logon events in a timewindow of 10 minutes. $failed_logon_meta</description>
+  </rule>
 
-  <!--
-  Anomaly matching rules [45-60]
-  -->
+  <!-- =============================== -->
+  <!--    5. High Severity Rules       -->
+  <!-- =============================== -->
+  
+  <!-- Potential brute-force attack -->
+  <rule id="200061" level="15" frequency="2" timeframe="600" ignore="3600">
+    <if_matched_sid>200033</if_matched_sid>
+    <description>Potential brute-force escalation after repeated failed logon events. $failed_logon_meta</description>
+  </rule>
 
-    
 </group>
